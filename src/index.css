@@ -1,0 +1,513 @@
+/* Tailwind بيتحمل من index.html — هنا متغيرات الثيم والخط والحركات المشتركة */
+
+/* القيم الافتراضية (بتتغير من لوحة التحكم ← الإعدادات ← المظهر)
+   --dark-* و --light-* بيحطهم ThemeManager، وهنا بنختار منهم حسب الوضع */
+:root {
+  --brand: 229 9 20; /* #E50914 */
+  --brand-dark: 190 18 60; /* #BE123C */
+  --brand-2: 244 63 94; /* #F43F5E */
+  --font-body: "Tajawal";
+  --font-heading: "Tajawal";
+  --container: 80rem;
+  --cols: 4;
+
+  /* الوضع الفاتح */
+  --bg: var(--light-bg, 245 245 247);
+  --surface: var(--light-surface, 255 255 255);
+  --surface-2: var(--light-surface-2, 238 238 242);
+  --ink: 15 23 42; /* slate-900 */
+  --ink-1: 15 23 42;
+  --ink-2: 30 41 59; /* slate-800 */
+  --ink-3: 51 65 85; /* slate-700 */
+  --muted: 71 85 105; /* slate-600 */
+  --faint: 100 116 139; /* slate-500 */
+  --fainter: 148 163 184; /* slate-400 */
+  --faintest: 203 213 225; /* slate-300 */
+  color-scheme: light;
+}
+
+/* الوضع الغامق — نفس ألوان الموقع الأصلية بالظبط */
+.dark {
+  --bg: var(--dark-bg, 7 7 9);
+  --surface: var(--dark-surface, 18 18 22);
+  --surface-2: var(--dark-surface-2, 10 10 12);
+  --ink: 255 255 255;
+  --ink-1: 241 245 249; /* slate-100 */
+  --ink-2: 226 232 240; /* slate-200 */
+  --ink-3: 203 213 225; /* slate-300 */
+  --muted: 148 163 184; /* slate-400 */
+  --faint: 100 116 139; /* slate-500 */
+  --fainter: 71 85 105; /* slate-600 */
+  --faintest: 51 65 85; /* slate-700 */
+  color-scheme: dark;
+}
+
+/* الألوان الفاتحة (كهرماني/أخضر…) مش واضحة على خلفية بيضا — نغمّقها في الوضع الفاتح */
+html:not(.dark) .text-amber-400, html:not(.dark) .text-amber-300 { color: #b45309; }
+html:not(.dark) .text-emerald-400 { color: #047857; }
+html:not(.dark) .text-sky-400 { color: #0369a1; }
+html:not(.dark) .text-violet-300 { color: #6d28d9; }
+html:not(.dark) .text-cyan-300 { color: #0e7490; }
+html:not(.dark) .shadow-2xl, html:not(.dark) .shadow-xl { --tw-shadow-color: rgb(15 23 42 / 0.08); }
+
+* {
+  font-family: var(--font-body), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h1 *,
+h2 *,
+h3 * {
+  font-family: var(--font-heading), var(--font-body), sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: rgb(var(--bg));
+  margin: 0;
+}
+
+/* شريط تمرير بألوان الموقع */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--surface-2));
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--faintest));
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--brand));
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* حركة شريط الشركاء (اتجاه RTL) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  aside,
+  header {
+    display: none !important;
+  }
+}
+
+/* =====================================================================
+   نظام الحركة والتصميم (Design System v3)
+   ===================================================================== */
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- ظهور العناصر مع التمرير (<Reveal>) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+  will-change: opacity, transform;
+}
+.reveal[data-variant="left"] { transform: translate3d(-36px, 0, 0); }
+.reveal[data-variant="right"] { transform: translate3d(36px, 0, 0); }
+.reveal[data-variant="scale"] { transform: scale(0.94); }
+.reveal[data-variant="fade"] { transform: none; }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* ---------- دخول الصفحة ---------- */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-page { animation: pageIn 0.55s var(--ease-out) both; }
+
+/* ---------- خلفيات حية ---------- */
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -30px) scale(1.1); }
+  66% { transform: translate(-30px, 20px) scale(0.95); }
+}
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.35;
+  animation: blob 18s ease-in-out infinite;
+}
+.aurora::before { top: -22vmax; right: -12vmax; background: rgb(var(--brand) / 0.55); }
+.aurora::after { bottom: -26vmax; left: -14vmax; background: rgb(var(--brand-2) / 0.35); animation-delay: -9s; }
+html:not(.dark) .aurora::before,
+html:not(.dark) .aurora::after { opacity: 0.18; }
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgb(var(--ink) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--ink) / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+.bg-dots {
+  background-image: radial-gradient(rgb(var(--ink) / 0.09) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* ---------- زجاج ---------- */
+.glass {
+  background: rgb(var(--surface) / 0.72);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+/* ---------- برواز متدرج ---------- */
+.gradient-border {
+  position: relative;
+  isolation: isolate;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgb(var(--brand) / 0.7), transparent 40%, transparent 60%, rgb(var(--brand-2) / 0.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ---------- لمعة الأزرار ---------- */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(120%) skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  transition: transform 0.7s var(--ease-out);
+  z-index: 1;
+  pointer-events: none;
+}
+.btn-shine:hover::after { transform: translateX(-120%) skewX(-20deg); }
+
+/* ---------- خط تحت الروابط (من اليمين لليسار) ---------- */
+.link-underline { position: relative; }
+.link-underline::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background: rgb(var(--brand));
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s var(--ease-out);
+}
+.link-underline:hover::after,
+.link-underline.active::after { transform: scaleX(1); }
+
+/* ---------- حركات صغيرة ---------- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-slow { animation: float 9s ease-in-out infinite; }
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+.animate-kenburns { animation: kenburns 12s ease-out both; }
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgb(var(--ink) / 0.04) 25%, rgb(var(--ink) / 0.09) 50%, rgb(var(--ink) / 0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes gradientPan {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.text-gradient-animated {
+  background-image: linear-gradient(90deg, rgb(var(--brand)), rgb(var(--brand-2)), rgb(var(--brand)));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientPan 6s ease-in-out infinite;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.animate-pop { animation: pop 0.45s var(--ease-spring); }
+
+@keyframes digitIn {
+  from { transform: translateY(-60%); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.animate-digit { animation: digitIn 0.4s var(--ease-out); display: inline-block; }
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-scale-in { animation: scaleIn 0.35s var(--ease-out) both; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out both; }
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+.animate-slide-in { animation: slideInRight 0.45s var(--ease-out) both; }
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.animate-drop { animation: dropIn 0.28s var(--ease-out) both; }
+
+@keyframes progressFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.animate-progress { animation: progressFill linear both; transform-origin: right; }
+
+@keyframes marqueeReverse {
+  from { transform: translateX(50%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes ring {
+  0% { box-shadow: 0 0 0 0 rgb(var(--brand) / 0.45); }
+  100% { box-shadow: 0 0 0 14px rgb(var(--brand) / 0); }
+}
+.animate-ring { animation: ring 1.8s ease-out infinite; }
+
+/* إخفاء شريط التمرير في الكاروسيل */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* كتابة بخط محيطي كبير (الفوتر) */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(var(--ink) / 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ---------- الهيدر والفوتر (v4) ---------- */
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+.animate-sheet { animation: sheetUp 0.45s var(--ease-out) both; }
+
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spinSlow 14s linear infinite; }
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.animate-msg { animation: msgIn 0.5s var(--ease-out) both; }
+
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
+
+/* =====================================================================
+   الأسلوب الكلاسيكي الفاخر (v5) — أزرار وعناوين مشتركة لكل الصفحات
+   ===================================================================== */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgb(var(--brand));
+}
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+.eyebrow.centered::after {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+
+.btn-ink,
+.btn-outline,
+.btn-light,
+.btn-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  transition: background-color 0.35s, color 0.35s, border-color 0.35s;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn-ink { background: rgb(var(--ink)); color: rgb(var(--bg)); }
+.btn-ink:hover { background: rgb(var(--brand)); color: #fff; }
+.btn-brand { background: rgb(var(--brand)); color: #fff; }
+.btn-brand:hover { background: rgb(var(--ink)); color: rgb(var(--bg)); }
+.btn-outline { border-color: rgb(var(--ink) / 0.8); color: rgb(var(--ink)); background: transparent; }
+.btn-outline:hover { background: rgb(var(--ink)); color: rgb(var(--bg)); }
+.btn-light { background: #fff; color: #0a0a0a; }
+.btn-light:hover { background: rgb(var(--brand)); color: #fff; }
+.btn-ink:disabled,
+.btn-brand:disabled,
+.btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgb(var(--ink));
+  transition: color 0.3s, gap 0.3s;
+}
+.btn-link:hover { color: rgb(var(--brand)); gap: 0.8rem; }
+
+/* صورة بتكبر ببطء */
+.img-zoom { transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.group:hover .img-zoom { transform: scale(1.06); }
+
+/* خط رفيع بيترسم */
+.rule-draw {
+  height: 1px;
+  background: rgb(var(--ink) / 0.15);
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.is-visible .rule-draw,
+.rule-draw.is-visible { transform: scaleX(1); }
+
+/* =====================================================================
+   الكروت الرايقة (v6) — زوايا ناعمة، إطار باهت، ظل خفيف بيكبر عند المرور
+   ===================================================================== */
+.card-soft {
+  background: rgb(var(--surface));
+  border: 1px solid rgb(var(--ink) / 0.06);
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 12px 32px -22px rgb(15 23 42 / 0.2);
+  transition: box-shadow 0.5s var(--ease-out), transform 0.5s var(--ease-out), border-color 0.5s;
+}
+.dark .card-soft {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 18px 40px -26px rgb(0 0 0 / 0.9);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgb(var(--brand) / 0.2);
+  box-shadow: 0 2px 4px rgb(15 23 42 / 0.04), 0 30px 50px -26px rgb(15 23 42 / 0.32);
+}
+.dark .card-hover:hover {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 30px 60px -28px rgb(0 0 0 / 1);
+}
+/* كارت جوه كارت (خلفية أهدى) */
+.card-inset {
+  background: rgb(var(--surface-2));
+  border: 1px solid rgb(var(--ink) / 0.05);
+  border-radius: 1rem;
+}
+/* شارة ناعمة */
+.pill-soft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+}
